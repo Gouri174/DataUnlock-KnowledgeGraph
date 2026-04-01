@@ -1,0 +1,8 @@
+# Ignore everything
+*
+
+# But do not ignore the .html file in the output folder
+!output/kg_visual.html
+
+# Also do not ignore the .gitignore file itself
+!.gitignore
