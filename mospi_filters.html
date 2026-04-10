@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India Data Commons — Filter Reference</title>
+<style>
+:root {
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --border: #e2e5ed;
+  --border2: #c8cdd8;
+  --text: #1a1d27;
+  --muted: #6b7280;
+  --hint: #9ca3af;
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+  --req-bg: #fef2f2;
+  --req-text: #dc2626;
+  --opt-bg: #f0fdf4;
+  --opt-text: #16a34a;
+  --warn-bg: #fffbeb;
+  --warn-text: #d97706;
+  --tag-bg: #f1f5f9;
+  --tag-text: #475569;
+  --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --sans: 'Inter', system-ui, sans-serif;
+  --radius: 6px;
+  --radius-lg: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── Layout ── */
+.shell { display: flex; height: 100vh; overflow: hidden; }
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 16px 14px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-header h1 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.01em;
+}
+
+.sidebar-header p {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.search-wrap {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.search-wrap input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+}
+
+.search-wrap input:focus { border-color: var(--accent); }
+.search-wrap input::placeholder { color: var(--hint); }
+
+.cat-filters {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.cat-btn {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 7px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .12s;
+  letter-spacing: .02em;
+}
+
+.cat-btn.active, .cat-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.ds-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.ds-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all .1s;
+}
+
+.ds-item:hover { background: var(--bg); }
+.ds-item.active { background: var(--accent-bg); border-left-color: var(--accent); }
+.ds-item.hidden { display: none; }
+
+.ds-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ds-item-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.ds-item.active .ds-item-name { color: var(--accent); }
+
+.ds-item-sub {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* ── Main panel ── */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--bg);
+}
+
+.main-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 28px 40px;
+}
+
+/* ── Dataset header ── */
+.ds-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px 16px;
+  margin-bottom: 18px;
+}
+
+.ds-header-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.ds-badge {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--mono);
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  color: white;
+  flex-shrink: 0;
+  letter-spacing: .04em;
+}
+
+.ds-full-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.ds-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.ds-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.meta-chip {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-weight: 500;
+}
+
+.meta-chip.accent { background: var(--accent-bg); color: var(--accent); }
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all .12s;
+}
+
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-btn:hover:not(.active) { color: var(--text); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Filter table ── */
+.filter-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.filter-section-title {
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 190px 60px 65px 1fr;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+
+.filter-row:last-child { border-bottom: none; }
+.filter-row.header-row { background: var(--bg); }
+
+.filter-cell {
+  padding: 9px 12px;
+  border-right: 1px solid var(--border);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.filter-cell:last-child { border-right: none; }
+
+.header-row .filter-cell {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--hint);
+  padding: 7px 12px;
+}
+
+.param-name {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.badge-req {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: var(--req-bg);
+  color: var(--req-text);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.badge-opt {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: var(--opt-bg);
+  color: var(--opt-text);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.type-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--tag-bg);
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+.filter-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.filter-desc .vals {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  background: var(--tag-bg);
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin: 0 1px;
+}
+
+.filter-desc em {
+  font-style: normal;
+  color: var(--warn-text);
+  font-weight: 500;
+}
+
+/* ── Note boxes ── */
+.note-box {
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 14px;
+  border-left: 3px solid;
+}
+
+.note-box.info { background: var(--accent-bg); border-color: var(--accent); color: #1e40af; }
+.note-box.warn { background: var(--warn-bg); border-color: var(--warn-text); color: #92400e; }
+.note-box.tip  { background: var(--opt-bg); border-color: var(--opt-text); color: #14532d; }
+
+/* ── Python snippet tab ── */
+.code-block {
+  background: #1e1e2e;
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  color: #cdd6f4;
+  position: relative;
+  overflow-x: auto;
+  margin-bottom: 14px;
+}
+
+.code-block .kw  { color: #cba6f7; }
+.code-block .fn  { color: #89b4fa; }
+.code-block .st  { color: #a6e3a1; }
+.code-block .cm  { color: #6c7086; font-style: italic; }
+.code-block .nm  { color: #f9e2af; }
+.code-block .op  { color: #89dceb; }
+
+.copy-btn {
+  position: absolute;
+  top: 10px; right: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  border: 1px solid #45475a;
+  background: #313244;
+  color: #cdd6f4;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all .12s;
+}
+
+.copy-btn:hover { background: #45475a; }
+.copy-btn.copied { background: #1e3a2f; border-color: #a6e3a1; color: #a6e3a1; }
+
+/* ── Values tab ── */
+.val-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.val-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+
+.val-card-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+
+.val-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.val-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+}
+
+.val-code {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  padding: 1px 5px;
+  border-radius: 3px;
+  min-width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.val-label { color: var(--text); }
+
+/* ── Overview tab ── */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.ov-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+
+.ov-card-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--hint);
+  margin-bottom: 5px;
+}
+
+.ov-card-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .shell { flex-direction: column; height: auto; }
+  .sidebar { width: 100%; height: auto; }
+  .main { overflow: visible; }
+  .filter-row { grid-template-columns: 1fr 1fr; }
+  .overview-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══════════════════════════════════════════════════ SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>India Data Commons</h1>
+    <p>Filter Reference · 20 Datasets</p>
+  </div>
+  <div class="search-wrap">
+    <input type="text" id="ds-search" placeholder="Search datasets…" oninput="filterSidebar()">
+  </div>
+  <div class="cat-filters">
+    <button class="cat-btn active" onclick="setCat('all',this)">All</button>
+    <button class="cat-btn" onclick="setCat('economy',this)">Economy</button>
+    <button class="cat-btn" onclick="setCat('labour',this)">Labour</button>
+    <button class="cat-btn" onclick="setCat('prices',this)">Prices</button>
+    <button class="cat-btn" onclick="setCat('health',this)">Health</button>
+    <button class="cat-btn" onclick="setCat('social',this)">Social</button>
+    <button class="cat-btn" onclick="setCat('env',this)">Env</button>
+    <button class="cat-btn" onclick="setCat('trade',this)">Trade</button>
+    <button class="cat-btn" onclick="setCat('agri',this)">Agri</button>
+    <button class="cat-btn" onclick="setCat('educ',this)">Educ</button>
+  </div>
+  <div class="ds-list" id="ds-list"></div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════ MAIN -->
+<main class="main" id="main">
+  <div class="main-inner" id="main-inner">
+    <div id="panel-content"></div>
+  </div>
+</main>
+
+</div>
+<script>
+/* ═══════════════════════════════════════ DATA ════════════════════════════════════════ */
+
+const CAT_COLOR = {
+  economy:"#f59e0b", labour:"#10b981", prices:"#f43f5e",
+  health:"#a78bfa", social:"#fb923c", env:"#34d399",
+  trade:"#60a5fa", agri:"#fbbf24", educ:"#e879f9"
+};
+
+const DATASETS = [
+{
+  id:"PLFS", name:"Periodic Labour Force Survey", cat:"labour",
+  indicators:8, freq:"Annual · Quarterly · Monthly", coverage:"2017-18 to 2025-26",
+  use:"LFPR, WPR, Unemployment Rate, wages, employment conditions",
+  desc:"Labour market dynamics across 3 frequency modes. Annual has 8 indicators; Quarterly and Monthly have 3. frequency_code selects the indicator SET — not just time granularity.",
+  notes:[
+    {type:"warn", text:"<strong>indicator_code is SINGLE VALUE ONLY</strong> — comma-separated causes a 500 error."},
+    {type:"info", text:"Omitting <code>state_code</code> returns all 30 states + All India in one call."},
+    {type:"tip",  text:"Indicators 6, 7, 8 (wages) have quarterly breakdowns via <code>quarter_code</code> even in Annual frequency."}
+  ],
+  sections:[
+    { title:"Required", filters:[
+      {name:"indicator_code", req:true, type:"integer", desc:"Annual fc=1: <span class='vals'>1</span>=LFPR <span class='vals'>2</span>=WPR <span class='vals'>3</span>=UR <span class='vals'>4</span>=Worker distribution <span class='vals'>5</span>=Employment conditions <span class='vals'>6</span>=Salaried wages <span class='vals'>7</span>=Casual wages <span class='vals'>8</span>=Self-employment. Q fc=2 & Monthly fc=3: codes 1-3 only. Single value only."},
+      {name:"frequency_code", req:true, type:"integer", desc:"<span class='vals'>1</span>=Annual (2017-18 to 2023-24, YYYY-YY format) <span class='vals'>2</span>=Quarterly bulletin (2017-18 to 2025-26) <span class='vals'>3</span>=Monthly (2025+, YYYY format)"},
+    ]},
+    { title:"Demographic Filters (all frequencies)", filters:[
+      {name:"gender_code",  req:false, type:"string", desc:"<span class='vals'>1</span>=Male <span class='vals'>2</span>=Female <span class='vals'>3</span>=Person. Comma-separated."},
+      {name:"age_code",     req:false, type:"string", desc:"fc=1: <span class='vals'>1,2,3,4</span> (3=15-59 yrs). fc=2,3: <span class='vals'>1,2,4</span> only — code 3 not available. Comma-sep."},
+      {name:"sector_code",  req:false, type:"string", desc:"<span class='vals'>1</span>=Rural <span class='vals'>2</span>=Urban <span class='vals'>3</span>=Rural+Urban. Comma-sep."},
+      {name:"state_code",   req:false, type:"string", desc:"1-38 individual states/UTs + <span class='vals'>99</span>=All India. Omit → all states returned."},
+    ]},
+    { title:"Time Filters", filters:[
+      {name:"year",          req:false, type:"string", desc:"fc=1,2: YYYY-YY (e.g. <span class='vals'>2023-24</span>). fc=3: YYYY (e.g. <span class='vals'>2025</span>). Comma-sep."},
+      {name:"month_code",    req:false, type:"string", desc:"<em>Monthly only (fc=3).</em> 1-12. Comma-sep."},
+      {name:"quarter_code",  req:false, type:"string", desc:"<span class='vals'>2</span>=JUL-SEP <span class='vals'>3</span>=OCT-DEC <span class='vals'>4</span>=JAN-MAR <span class='vals'>5</span>=APR-JUN. fc=1: only useful for indicators 6,7,8."},
+      {name:"year_type_code",req:false, type:"string", desc:"<em>Annual only.</em> <span class='vals'>1</span>=Agriculture Year <span class='vals'>2</span>=Calendar Year."},
+    ]},
+    { title:"Annual-Only Filters", filters:[
+      {name:"weekly_status_code",   req:false, type:"string", desc:"<span class='vals'>1</span>=PS+SS <span class='vals'>2</span>=CWS"},
+      {name:"religion_code",        req:false, type:"string", desc:"<span class='vals'>1</span>=All <span class='vals'>2</span>=Hinduism <span class='vals'>3</span>=Islam <span class='vals'>4</span>=Christianity <span class='vals'>5</span>=Sikhism"},
+      {name:"social_category_code", req:false, type:"string", desc:"<span class='vals'>1</span>=All <span class='vals'>2</span>=ST <span class='vals'>3</span>=SC <span class='vals'>4</span>=OBC <span class='vals'>5</span>=Others"},
+      {name:"education_code",       req:false, type:"string", desc:"<span class='vals'>1</span>=Not literate → <span class='vals'>10</span>=All (10 levels)"},
+    ]},
+    { title:"indicator_code=4 Only (Worker Distribution)", filters:[
+      {name:"broad_industry_work_code",     req:false, type:"string", desc:"1-4"},
+      {name:"broad_status_employment_code", req:false, type:"string", desc:"1-6"},
+      {name:"enterprise_size_code",         req:false, type:"string", desc:"1-6"},
+      {name:"enterprise_type_code",         req:false, type:"string", desc:"1-9"},
+      {name:"industry_section_code",        req:false, type:"string", desc:"1-22"},
+      {name:"nco_division_code",            req:false, type:"string", desc:"1-11"},
+      {name:"nic_group_code",               req:false, type:"string", desc:"1-14"},
+    ]},
+    { title:"indicator_code=5 Only (Employment Conditions)", filters:[
+      {name:"employee_contract_code", req:false, type:"string", desc:"1-5"},
+    ]},
+  ],
+  python:`async def extract_plfs(client, cfg):
+    freq_map   = {1: 8, 2: 4, 3: 3}
+    freq_label = {1: "Annual", 2: "Quarterly", 3: "Monthly"}
+    for fc, max_ind in freq_map.items():
+        base = {
+            "frequency_code": fc,
+            "gender_code": "1,2,3",
+            "age_code": "1,2,3,4" if fc == 1 else "1,2,4",
+            "sector_code": "1,2,3",
+        }
+        if fc == 1:
+            base.update({
+                "weekly_status_code":   "1,2",
+                "year_type_code":       "1,2",
+                "religion_code":        "1,2,3,4,5",
+                "social_category_code": "1,2,3,4,5",
+                "education_code":       "1,2,3,4,5,6,7,8,9,10",
+            })
+        for ind in range(1, max_ind + 1):
+            filters = {**base, "indicator_code": ind}
+            if fc == 1 and ind == 4:
+                filters.update({
+                    "broad_industry_work_code":     "1,2,3,4",
+                    "broad_status_employment_code": "1,2,3,4,5,6",
+                    "enterprise_size_code":         "1,2,3,4,5,6",
+                    "enterprise_type_code":         "1,2,3,4,5,6,7,8,9",
+                    "industry_section_code": ",".join(str(i) for i in range(1,23)),
+                    "nco_division_code":     ",".join(str(i) for i in range(1,12)),
+                    "nic_group_code":        ",".join(str(i) for i in range(1,15)),
+                })
+            if fc == 1 and ind == 5:
+                filters["employee_contract_code"] = "1,2,3,4,5"
+            await fetch(client, cfg, "PLFS",
+                        f"{freq_label[fc]}_ind{ind}", filters)`,
+  values:{
+    gender: [{code:1,label:"Male"},{code:2,label:"Female"},{code:3,label:"Person"}],
+    age: [{code:1,label:"15 years and above"},{code:2,label:"15-29 years"},{code:3,label:"15-59 years (Annual only)"},{code:4,label:"All"}],
+    sector: [{code:1,label:"Rural"},{code:2,label:"Urban"},{code:3,label:"Rural+Urban"}],
+    weekly_status: [{code:1,label:"PS+SS"},{code:2,label:"CWS"}],
+    religion: [{code:1,label:"All"},{code:2,label:"Hinduism"},{code:3,label:"Islam"},{code:4,label:"Christianity"},{code:5,label:"Sikhism"}],
+    social_category: [{code:1,label:"All"},{code:2,label:"Scheduled Tribe"},{code:3,label:"Scheduled Caste"},{code:4,label:"OBC"},{code:5,label:"Others"}],
+  }
+},
+{
+  id:"CPI", name:"Consumer Price Index", cat:"prices",
+  indicators:600, freq:"Monthly", coverage:"2011 to 2025",
+  use:"Retail inflation, price indices, cost of living",
+  desc:"Hierarchical commodity structure with base years 2010, 2012, 2024. 600+ items across food, fuel, housing, clothing, miscellaneous. State-level at Group; All-India at Item level.",
+  notes:[
+    {type:"info", text:"base_year 2010/2012 use <strong>two separate endpoints</strong>: getCPIIndex (Group) and getItemIndex (Item). base_year 2024 uses getCPIData (unified)."},
+    {type:"tip",  text:"Omitting <code>state_code</code> returns all 37 states. Item level only supports All-India — do not pass state_code."},
+    {type:"warn", text:"base_year 2024 has new parameters: <code>division_code</code>, <code>class_code</code>, <code>sub_class_code</code>, <code>imputation_code</code>."}
+  ],
+  sections:[
+    { title:"Required", filters:[
+      {name:"base_year", req:true, type:"string", desc:"<span class='vals'>2010</span> <span class='vals'>2012</span> <span class='vals'>2024</span>"},
+      {name:"series",    req:true, type:"string", desc:"<span class='vals'>Current</span> <span class='vals'>Back</span>"},
+      {name:"level",     req:true, type:"string", desc:"<span class='vals'>Group</span> (state breakdown available) or <span class='vals'>Item</span> (All-India only). <em>Not for base_year=2024.</em>"},
+    ]},
+    { title:"Group-Level Filters (base_year 2010/2012)", filters:[
+      {name:"sector_code",   req:false, type:"string", desc:"<span class='vals'>1</span>=Rural <span class='vals'>2</span>=Urban <span class='vals'>3</span>=Combined"},
+      {name:"state_code",    req:false, type:"string", desc:"State codes (vary by base_year). Omit → all states."},
+      {name:"group_code",    req:false, type:"string", desc:"<span class='vals'>0</span>=General <span class='vals'>1</span>=Food & Bev <span class='vals'>2</span>=Pan/Tobacco <span class='vals'>3</span>=Clothing <span class='vals'>4</span>=Housing <span class='vals'>5</span>=Fuel <span class='vals'>6</span>=Misc <span class='vals'>7</span>=Consumer Food Price"},
+      {name:"subgroup_code", req:false, type:"string", desc:"Commodity subgroup codes (e.g. 1.1.01=Cereals). Comma-sep."},
+    ]},
+    { title:"Time Filters", filters:[
+      {name:"year",       req:false, type:"string", desc:"YYYY format. Comma-sep."},
+      {name:"month_code", req:false, type:"string", desc:"1-12. Comma-sep."},
+    ]},
+    { title:"base_year=2024 Extra Filters", filters:[
+      {name:"imputation_code",req:false, type:"string", desc:"<span class='vals'>Y</span> <span class='vals'>N</span>"},
+      {name:"division_code",  req:false, type:"string", desc:"Division level codes"},
+      {name:"class_code",     req:false, type:"string", desc:"Class level codes"},
+      {name:"sub_class_code", req:false, type:"string", desc:"Sub-class level codes"},
+    ]},
+  ],
+  python:`async def extract_cpi(client, cfg):
+    for by in ["2010", "2012"]:
+        for series in ["Current", "Back"]:
+            # Group level — state breakdown
+            await fetch(client, cfg, "CPI", f"base{by}_Group_{series}", {
+                "base_year": by, "level": "Group",
+                "series": series, "sector_code": "1,2,3",
+            })
+            # Item level — All-India only
+            await fetch(client, cfg, "CPI", f"base{by}_Item_{series}", {
+                "base_year": by, "level": "Item", "series": series,
+            })
+    # base_year 2024 — unified endpoint
+    for series in ["Current", "Back"]:
+        await fetch(client, cfg, "CPI", f"base2024_{series}", {
+            "base_year": "2024", "series": series,
+            "sector_code": "1,2,3", "imputation_code": "Y,N",
+        })`,
+  values:{
+    group: [{code:"0",label:"General"},{code:"1",label:"Food and Beverages"},{code:"2",label:"Pan, Tobacco and Intoxicants"},{code:"3",label:"Clothing and Footwear"},{code:"4",label:"Housing"},{code:"5",label:"Fuel and Light"},{code:"6",label:"Miscellaneous"},{code:"7",label:"Consumer Food Price"}],
+    sector: [{code:1,label:"Rural"},{code:2,label:"Urban"},{code:3,label:"Combined"}],
+  }
+},
+{
+  id:"IIP", name:"Index of Industrial Production", cat:"economy",
+  indicators:10, freq:"Annual · Monthly", coverage:"1993-94 to 2024-25",
+  use:"Industrial production index, mining, manufacturing, electricity",
+  desc:"Category-based structure with 3 base years and Annually/Monthly frequencies. Sectoral (Mining/Mfg/Electricity), Use-based (Capital/Consumer/Intermediate goods), and General indices.",
+  notes:[
+    {type:"info", text:"No state breakdown for IIP. All data is national-level only."},
+    {type:"tip",  text:"Omit <code>category_code</code> and <code>subcategory_code</code> → all categories returned in one call."},
+    {type:"warn", text:"<code>financial_year</code> param (YYYY-YY) is for Annually only. Monthly uses <code>year</code> (YYYY) + <code>month_code</code>."}
+  ],
+  sections:[
+    { title:"Required", filters:[
+      {name:"base_year",  req:true, type:"string", desc:"<span class='vals'>2011-12</span> (latest) <span class='vals'>2004-05</span> <span class='vals'>1993-94</span>"},
+      {name:"frequency",  req:true, type:"string", desc:"<span class='vals'>Annually</span> <span class='vals'>Monthly</span>"},
+      {name:"type",       req:true, type:"string", desc:"<span class='vals'>All</span> <span class='vals'>Sectoral</span> <span class='vals'>Use-based category</span> <span class='vals'>General</span>"},
+    ]},
+    { title:"Optional", filters:[
+      {name:"category_code",    req:false, type:"string", desc:"<span class='vals'>1</span>=Mining <span class='vals'>2</span>=Manufacturing <span class='vals'>3</span>=Electricity <span class='vals'>4</span>=General <span class='vals'>5-10</span>=Use-based categories"},
+      {name:"subcategory_code", req:false, type:"string", desc:"Industry NIC subcategory codes (vary by base_year). Comma-sep."},
+      {name:"financial_year",   req:false, type:"string", desc:"<em>Annually only.</em> YYYY-YY format. Comma-sep."},
+      {name:"year",             req:false, type:"string", desc:"<em>Monthly only.</em> YYYY format. Comma-sep."},
+      {name:"month_code",       req:false, type:"string", desc:"<em>Monthly only.</em> 1-12. Comma-sep."},
+    ]},
+  ],
+  python:`async def extract_iip(client, cfg):
+    for by in ["1993-94", "2004-05", "2011-12"]:
+        for freq in ["Annually", "Monthly"]:
+            for t in ["All","Sectoral","Use-based category","General"]:
+                await fetch(client, cfg, "IIP",
+                            f"base{by}_{freq}_{t}", {
+                    "base_year": by, "frequency": freq, "type": t,
+                })`,
+  values:{
+    type: [{code:"Sectoral",label:"Sectoral (Mining/Mfg/Electricity)"},{code:"Use-based category",label:"Use-based (Capital/Consumer/etc.)"},{code:"General",label:"General Index"},{code:"All",label:"All types"}],
+    category: [{code:1,label:"Mining"},{code:2,label:"Manufacturing"},{code:3,label:"Electricity"},{code:4,label:"General"},{code:5,label:"Primary Goods"},{code:6,label:"Capital Goods"},{code:7,label:"Intermediate Goods"},{code:8,label:"Infrastructure/Construction"},{code:9,label:"Consumer Durables"},{code:10,label:"Consumer Non-durables"}],
+  }
+},
+{
+  id:"ASI", name:"Annual Survey of Industries", cat:"economy",
+  indicators:57, freq:"Annual", coverage:"1992-93 to 2023-24",
+  use:"Factory financials: capital, wages, employment, GVA, fuel",
+  desc:"57 indicators covering fixed/working capital, production, employment (by gender/contract), wages, fuel consumption. Uses NIC classification across 4 classification years.",
+  notes:[
+    {type:"info", text:"<code>indicator_code</code> accepts a comma-separated list — all 57 can be fetched in one call."},
+    {type:"warn", text:"<code>sector_code</code> and <code>nic_type</code> are REQUIRED structural axes, not optional filters."},
+    {type:"tip",  text:"Omit <code>state_code</code> → all 39 states returned. Omit <code>nic_code</code> → all NIC codes returned."}
+  ],
+  sections:[
+    { title:"Required Structural Axes", filters:[
+      {name:"classification_year", req:true, type:"string", desc:"<span class='vals'>2008</span>=2008-09 to 2023-24 <span class='vals'>2004</span>=2004-05 to 2007-08 <span class='vals'>1998</span>=1998-99 to 2003-04 <span class='vals'>1987</span>=1992-93 to 1997-98"},
+      {name:"nic_type",           req:true, type:"string", desc:"<span class='vals'>All</span> <span class='vals'>2-digit</span> <span class='vals'>3-digit</span> <span class='vals'>4-digit</span>"},
+      {name:"sector_code",        req:true, type:"string", desc:"<span class='vals'>Rural</span> <span class='vals'>Urban</span> <span class='vals'>Combined</span>"},
+    ]},
+    { title:"Optional", filters:[
+      {name:"indicator_code", req:false, type:"string", desc:"1-57. Comma-separated (all 57 in one call). Omit → all returned."},
+      {name:"state_code",     req:false, type:"string", desc:"1-38, <span class='vals'>88</span>=Dadra+NH+D&D, <span class='vals'>99</span>=All India. Omit → all states."},
+      {name:"nic_code",       req:false, type:"string", desc:"Industry NIC codes (depend on nic_type and classification_year). Omit → all."},
+      {name:"year",           req:false, type:"string", desc:"YYYY-YY format. Comma-sep."},
+    ]},
+  ],
+  python:`async def extract_asi(client, cfg):
+    all_inds = ",".join(str(i) for i in range(1, 58))
+    for cy in ["1987", "1998", "2004", "2008"]:
+        for nic_type in ["All", "2-digit", "3-digit", "4-digit"]:
+            for sector in ["Rural", "Urban", "Combined"]:
+                await fetch(client, cfg, "ASI",
+                            f"cy{cy}_{nic_type}_{sector}", {
+                    "classification_year": cy,
+                    "nic_type": nic_type,
+                    "sector_code": sector,
+                    "indicator_code": all_inds,
+                })`,
+  values:{
+    classification_year:[{code:"2008",label:"2008-09 to 2023-24"},{code:"2004",label:"2004-05 to 2007-08"},{code:"1998",label:"1998-99 to 2003-04"},{code:"1987",label:"1992-93 to 1997-98"}],
+  }
+},
+{
+  id:"NAS", name:"National Accounts Statistics", cat:"economy",
+  indicators:33, freq:"Annual · Quarterly", coverage:"2011-12 to 2025-26",
+  use:"GDP, GVA, consumption, capital formation, national income",
+  desc:"22 annual + 11 quarterly macroeconomic indicators. GDP/GVA by industry, consumption, GFCF, trade, savings. Two base years. Current and Back series.",
+  notes:[
+    {type:"warn", text:"<code>indicator_code</code> is SINGLE VALUE ONLY. Annual range: 1-22. Quarterly range: 1-11."},
+    {type:"info", text:"No state breakdown for NAS. All data is national-level. Quarterly series only available for base_year=2022-23 (Current series)."},
+    {type:"tip",  text:"Pass <code>revision_code=2,4,8</code> to get 2nd Advance, 1st Revised, and Final Estimates together."}
+  ],
+  sections:[
+    { title:"Required", filters:[
+      {name:"base_year",      req:true, type:"string", desc:"<span class='vals'>2022-23</span> (latest) <span class='vals'>2011-12</span>"},
+      {name:"series",         req:true, type:"string", desc:"<span class='vals'>Current</span> <span class='vals'>Back</span>"},
+      {name:"frequency_code", req:true, type:"string", desc:"<span class='vals'>Annually</span> (indicators 1-22) <span class='vals'>Quarterly</span> (indicators 1-11)"},
+      {name:"indicator_code", req:true, type:"integer", desc:"Single value only. Annual: 1-22. Quarterly: 1-11."},
+    ]},
+    { title:"Optional", filters:[
+      {name:"revision_code",      req:false, type:"string", desc:"<span class='vals'>2</span>=2nd Advance Estimates <span class='vals'>4</span>=1st Revised <span class='vals'>8</span>=Final. Comma-sep."},
+      {name:"institutional_code", req:false, type:"string", desc:"1-7 (7=Total GVA). Comma-sep."},
+      {name:"industry_code",      req:false, type:"string", desc:"1-15. Comma-sep."},
+      {name:"subindustry_code",   req:false, type:"string", desc:"1-18. Comma-sep."},
+      {name:"quarterly_code",     req:false, type:"string", desc:"<em>Quarterly only.</em> 1-4. Comma-sep."},
+      {name:"approach_code",      req:false, type:"string", desc:"1-3"},
+      {name:"year",               req:false, type:"string", desc:"YYYY-YY format. Comma-sep."},
+    ]},
+  ],
+  python:`async def extract_nas(client, cfg):
+    freq_map = {"Annually": range(1,23), "Quarterly": range(1,12)}
+    for by in ["2011-12", "2022-23"]:
+        for series in ["Current", "Back"]:
+            for freq, inds in freq_map.items():
+                for ind in inds:
+                    filters = {
+                        "base_year": by, "series": series,
+                        "frequency_code": freq, "indicator_code": ind,
+                        "revision_code": "2,4,8",
+                        "institutional_code": ",".join(str(i) for i in range(1,8)),
+                        "industry_code":      ",".join(str(i) for i in range(1,16)),
+                        "subindustry_code":   ",".join(str(i) for i in range(1,19)),
+                    }
+                    if freq == "Quarterly":
+                        filters["quarterly_code"] = "1,2,3,4"
+                    await fetch(client, cfg, "NAS",
+                                f"base{by}_{series}_{freq}_ind{ind}", filters)`,
+  values:{
+    revision:[{code:2,label:"2nd Advance Estimates"},{code:4,label:"1st Revised Estimates"},{code:8,label:"Final Estimates"}],
+    institutional:[{code:1,label:"Public Non-Financial Corps"},{code:2,label:"Private Non-Financial Corps"},{code:3,label:"Public Financial Corps"},{code:4,label:"Private Financial Corps"},{code:5,label:"General Government"},{code:6,label:"Households incl. NPISH"},{code:7,label:"Total GVA"}],
+  }
+},
+{
+  id:"WPI", name:"Wholesale Price Index", cat:"prices",
+  indicators:1000, freq:"Monthly", coverage:"1995 to 2025",
+  use:"Wholesale/producer prices, commodity price trends",
+  desc:"1000+ commodities across 5 hierarchy levels. 3 base years. No state breakdown — national level only.",
+  notes:[
+    {type:"info", text:"No state breakdown. All data is national level."},
+    {type:"tip",  text:"Omit <code>commodity_code</code> → all commodities returned. Use <code>level</code> to control hierarchy depth."}
+  ],
+  sections:[
+    { title:"Required", filters:[
+      {name:"base_year", req:true, type:"string", desc:"<span class='vals'>2011-12</span> (latest, default) <span class='vals'>2004-05</span> <span class='vals'>1993-94</span>"},
+    ]},
+    { title:"Optional", filters:[
+      {name:"level",          req:false, type:"integer", desc:"<span class='vals'>1</span>=Major Groups <span class='vals'>2</span>=Groups <span class='vals'>3</span>=Sub-groups <span class='vals'>4</span>=Sub-sub-groups <span class='vals'>5</span>=Items"},
+      {name:"commodity_code", req:false, type:"string",  desc:"Commodity codes (vary by base_year). Omit → all."},
+      {name:"year",           req:false, type:"string",  desc:"YYYY format. Comma-sep."},
+      {name:"month_code",     req:false, type:"string",  desc:"1-12. Comma-sep."},
+    ]},
+  ],
+  python:`async def extract_wpi(client, cfg):
+    for by in ["1993-94", "2004-05", "2011-12"]:
+        for level in [1, 2, 3, 4, 5]:
+            await fetch(client, cfg, "WPI",
+                        f"base{by}_level{level}", {
+                "base_year": by, "level": level,
+            })`,
+  values:{
+    level:[{code:1,label:"Major Groups (Primary/Fuel/Mfg/Food)"},{code:2,label:"Groups (22)"},{code:3,label:"Sub-groups (90+)"},{code:4,label:"Sub-sub-groups"},{code:5,label:"Items (1000+)"}],
+  }
+},
+{
+  id:"ENERGY", name:"Energy Statistics", cat:"env",
+  indicators:2, freq:"Annual", coverage:"2012-13 to 2023-24",
+  use:"Energy production, consumption, fuel mix, sectoral energy use",
+  desc:"Energy balance across supply and consumption. 2 unit indicators (KToE and PetaJoules). All energy commodities and end-use sectors.",
+  notes:[
+    {type:"warn", text:"<code>indicator_code</code> and <code>use_of_energy_balance_code</code> are STRING enum values, not integers."},
+    {type:"tip",  text:"Omit <code>energy_commodities_code</code> → all 10 commodities returned."}
+  ],
+  sections:[
+    { title:"Required", filters:[
+      {name:"indicator_code",              req:true, type:"string", desc:"<span class='vals'>Energy Balance ( in KToE )</span> or <span class='vals'>Energy Balance ( in PetaJoules )</span>"},
+      {name:"use_of_energy_balance_code",  req:true, type:"string", desc:"<span class='vals'>Supply</span> or <span class='vals'>Consumption</span>"},
+    ]},
+    { title:"Optional", filters:[
+      {name:"energy_commodities_code",    req:false, type:"string", desc:"<span class='vals'>1</span>=Coal <span class='vals'>2</span>=Crude Oil <span class='vals'>3</span>=Oil Products <span class='vals'>4</span>=Natural Gas <span class='vals'>5</span>=Nuclear <span class='vals'>6</span>=Hydro <span class='vals'>7</span>=Solar+Wind+Others <span class='vals'>8</span>=Electricity <span class='vals'>9</span>=Lignite <span class='vals'>10</span>=Total"},
+      {name:"energy_sub_commodities_code",req:false, type:"string", desc:"1-12. Comma-sep."},
+      {name:"end_use_sector_code",        req:false, type:"string", desc:"<span class='vals'>5</span>=Production <span class='vals'>6</span>=Imports <span class='vals'>7</span>=Exports <span class='vals'>8</span>=Stock changes <span class='vals'>9</span>=Total primary energy supply"},
+      {name:"end_use_sub_sector_code",    req:false, type:"string", desc:"1-22. Comma-sep."},
+      {name:"year",                       req:false, type:"string", desc:"YYYY-YY format. Comma-sep."},
+    ]},
+  ],
+  python:`async def extract_energy(client, cfg):
+    for ind in ["Energy Balance ( in KToE )", "Energy Balance ( in PetaJoules )"]:
+        for bc in ["Supply", "Consumption"]:
+            lbl = ("KToE" if "KToE" in ind else "PJ") + "_" + bc
+            await fetch(client, cfg, "ENERGY", lbl, {
+                "indicator_code": ind,
+                "use_of_energy_balance_code": bc,
+                "energy_commodities_code":
+                    ",".join(str(i) for i in range(1,11)),
+                "end_use_sector_code":
+                    ",".join(str(i) for i in range(1,11)),
+            })`,
+  values:{
+    commodities:[{code:1,label:"Coal"},{code:2,label:"Crude Oil"},{code:3,label:"Oil Products"},{code:4,label:"Natural Gas"},{code:5,label:"Nuclear"},{code:6,label:"Hydro"},{code:7,label:"Solar, Wind, Others"},{code:8,label:"Electricity"},{code:9,label:"Lignite"},{code:10,label:"Total"}],
+  }
+},
+{
+  id:"AISHE", name:"All India Survey on Higher Education", cat:"educ",
+  indicators:9, freq:"Annual", coverage:"2017-18 to 2021-22",
+  use:"Universities, colleges, enrolment, GER, GPI, PTR",
+  desc:"9 indicators on higher education access and equity. State-wise breakdown available. Many sub-dimension filters are indicator-specific.",
+  notes:[
+    {type:"info", text:"Omit <code>state_code</code> → all 34 states/UTs returned. State code 37=All India."},
+    {type:"tip",  text:"Sub-dimension filters (gender_code, social_category_code etc.) are indicator-specific — not all apply to all indicators."}
+  ],
+  sections:[
+    { title:"Required", filters:[
+      {name:"indicator_code", req:true, type:"integer", desc:"1-9 (single value only). 1=Universities, 2=Colleges, 3=Enrolment total, 4=Social group enrolment, 5=PWD+Minority enrolment, 6=GER by social group, 7=GPI, 8=PTR by mode, 9=Teacher counts"},
+    ]},
+    { title:"Optional", filters:[
+      {name:"state_code",            req:false, type:"integer", desc:"1-36 individual + 37=All India. Omit → all states."},
+      {name:"year",                  req:false, type:"string",  desc:"YYYY-YY format."},
+      {name:"gender_code",           req:false, type:"integer", desc:"Gender filter"},
+      {name:"social_category_code",  req:false, type:"integer", desc:"SC/ST/OBC/Others"},
+      {name:"social_group_code",     req:false, type:"integer", desc:"PWD, Minority etc."},
+      {name:"institution_type_code", req:false, type:"integer", desc:"University type"},
+      {name:"sub_indicator_code",    req:false, type:"integer", desc:"Sub-breakdown"},
+      {name:"faculty_type_code",     req:false, type:"integer", desc:"Faculty type"},
+      {name:"learning_mode_code",    req:false, type:"integer", desc:"Regular/Distance"},
+      {name:"education_level_code",  req:false, type:"integer", desc:"PhD/PG/UG etc."},
+      {name:"category_code",         req:false, type:"integer", desc:"Institution category"},
+    ]},
+  ],
+  python:`async def extract_aishe(client, cfg):
+    for ind in range(1, 10):
+        await fetch(client, cfg, "AISHE", f"ind{ind}",
+                    {"indicator_code": ind})`,
+  values:{}
+},
+{
+  id:"ASUSE", name:"Annual Survey of Unincorporated Enterprises", cat:"economy",
+  indicators:50, freq:"Annual · Quarterly", coverage:"2021-22 to 2025",
+  use:"Informal sector, small businesses, self-employment, MSMEs",
+  desc:"35 annual + 15 quarterly indicators. Annual: establishments, workers, GVA, digital adoption. Quarterly: market/hired/OAE establishment percentages.",
+  notes:[
+    {type:"warn", text:"Do NOT pass <code>frequency_code</code> in get_data — the indicator_code itself determines annual vs quarterly."},
+    {type:"warn", text:"<code>sector_code</code> and <code>broad_activity_category_code</code> are MUTUALLY EXCLUSIVE — use one OR the other."},
+    {type:"tip",  text:"Omit <code>state_ut_code</code> → all states returned."}
+  ],
+  sections:[
+    { title:"Required", filters:[
+      {name:"indicator_code", req:true, type:"integer", desc:"Annual: 1-35. Quarterly: 1-15. Single value. The code itself selects annual vs quarterly."},
+    ]},
+    { title:"Core Optional", filters:[
+      {name:"sector_code",                req:false, type:"string",  desc:"<span class='vals'>1</span>=Rural <span class='vals'>2</span>=Urban <span class='vals'>3</span>=Combined. <em>MUTUALLY EXCLUSIVE with broad_activity_category_code.</em>"},
+      {name:"broad_activity_category_code",req:false,type:"string", desc:"<span class='vals'>1-4</span>. <em>MUTUALLY EXCLUSIVE with sector_code.</em>"},
+      {name:"activity_category_code",     req:false, type:"string",  desc:"1-50 (50=All). Activity sectors. Comma-sep."},
+      {name:"gender_code",               req:false, type:"string",  desc:"1-4. Comma-sep."},
+      {name:"establishment_type_code",   req:false, type:"string",  desc:"<span class='vals'>1</span>=HWE <span class='vals'>2</span>=OAE <span class='vals'>3</span>=All"},
+      {name:"ownership_type_code",       req:false, type:"string",  desc:"1-8. Comma-sep."},
+      {name:"state_ut_code",             req:false, type:"string",  desc:"1-37. Omit → all states."},
+      {name:"sub_indicator_code",        req:false, type:"string",  desc:"1-19. Comma-sep."},
+    ]},
+    { title:"Additional Optional Filters", filters:[
+      {name:"general_education_level_code",req:false,type:"string",desc:"1-7"},
+      {name:"social_group_of_owner_major_partner_code",req:false,type:"string",desc:"1-6"},
+      {name:"nature_of_operation_code",  req:false,type:"string",desc:"1-4"},
+      {name:"no_of_months_operated_code",req:false,type:"string",desc:"1-6"},
+      {name:"no_of_working_hours_code",  req:false,type:"string",desc:"1-5"},
+      {name:"audit_status_code",         req:false,type:"string",desc:"1-3"},
+      {name:"npi_status_code",           req:false,type:"string",desc:"1-4"},
+      {name:"acts_agency_of_registration_code",req:false,type:"string",desc:"1-10"},
+      {name:"services_contract_code",    req:false,type:"string",desc:"1-5"},
+      {name:"nature_of_employment_code", req:false,type:"string",desc:"1-3"},
+      {name:"type_of_worker_code",       req:false,type:"string",desc:"1-6"},
+      {name:"hired_worker_code",         req:false,type:"string",desc:"1-3"},
+      {name:"fixed_assets_code",         req:false,type:"string",desc:"1-3"},
+      {name:"usage_of_internet_code",    req:false,type:"string",desc:"1-13"},
+      {name:"worker_characteristics_code",req:false,type:"string",desc:"1-7"},
+      {name:"worker_number_code",        req:false,type:"string",desc:"1-21"},
+      {name:"other_economic_activitycount_code",req:false,type:"string",desc:"1-6"},
+      {name:"account_holder_code",       req:false,type:"string",desc:"1-3"},
+      {name:"location_of_establishments_code",req:false,type:"string",desc:"1-7"},
+      {name:"quarter_code",              req:false,type:"string",desc:"<em>Quarterly only.</em> <span class='vals'>1</span>=JAN-MAR <span class='vals'>2</span>=APR-JUN <span class='vals'>3</span>=JUL-SEP <span class='vals'>4</span>=OCT-DEC"},
+      {name:"year",                      req:false,type:"string",desc:"Annual: YYYY-YY. Quarterly: YYYY."},
+    ]},
+  ],
+  python:`async def extract_asuse(client, cfg):
+    freq_map = {1: range(1,36), 2: range(1,16)}
+    freq_label = {1: "Annual", 2: "Quarterly"}
+    for fc, inds in freq_map.items():
+        for ind in inds:
+            await fetch(client, cfg, "ASUSE",
+                        f"{freq_label[fc]}_ind{ind}", {
+                "indicator_code": ind,
+                "sector_code": "1,2,3",
+                "activity_category_code":
+                    ",".join(str(i) for i in range(1,51)),
+                "establishment_type_code": "1,2,3",
+            })`,
+  values:{
+    establishment:[{code:1,label:"Hired Worker Establishments (HWE)"},{code:2,label:"Own Account Establishments (OAE)"},{code:3,label:"All Establishments"}],
+  }
+},
+{
+  id:"GENDER", name:"Gender Statistics", cat:"social",
+  indicators:147, freq:"Various", coverage:"1951 to 2024",
+  use:"Demographics, health, education, labour, crime, political participation",
+  desc:"147 indicators across all social domains. indicator_code is the FULL STRING NAME of the indicator, not a number. Enormous range of sub-dimension filters.",
+  notes:[
+    {type:"warn", text:"<strong>indicator_code is the full string name</strong> — e.g. <code>'Sex Ratio'</code>, not a number. 147 indicator names available."},
+    {type:"info", text:"Omit <code>state_ut_code</code> → all states returned. Many sub-filters are indicator-specific."},
+    {type:"tip",  text:"Most sub-dimension filters (crime_head_code, lok_sabha_election_code, etc.) are ignored if not relevant to the selected indicator."}
+  ],
+  sections:[
+    { title:"Required", filters:[
+      {name:"indicator_code", req:true, type:"string", desc:"Full indicator name string. 147 indicators total. E.g. <span class='vals'>Sex Ratio</span>, <span class='vals'>Maternal Mortality Ratio</span>, <span class='vals'>Literacy Rates for persons aged 7 years and above</span>"},
+    ]},
+    { title:"Core Filters", filters:[
+      {name:"sector_code",         req:false, type:"string", desc:"<span class='vals'>1</span>=Rural <span class='vals'>2</span>=Urban <span class='vals'>3</span>=Total"},
+      {name:"gender_code",         req:false, type:"string", desc:"<span class='vals'>1</span>=Male <span class='vals'>2</span>=Female <span class='vals'>7</span>=Person"},
+      {name:"sub_indicator_code",  req:false, type:"string", desc:"1-152. Comma-sep."},
+      {name:"state_ut_code",       req:false, type:"string", desc:"State codes 1-43. Omit → all states."},
+    ]},
+    { title:"Demographic Sub-Dimensions", filters:[
+      {name:"age_group_code",              req:false, type:"string", desc:"1-41"},
+      {name:"education_level_code",        req:false, type:"string", desc:"1-74"},
+      {name:"birth_order_code",            req:false, type:"string", desc:"1-4"},
+      {name:"survey_code",                 req:false, type:"string", desc:"1-6"},
+      {name:"family_planning_method_code", req:false, type:"string", desc:"1-11"},
+      {name:"ayush_category_code",         req:false, type:"string", desc:"1-7"},
+    ]},
+    { title:"Labour & Education Sub-Dimensions", filters:[
+      {name:"discipline_code",           req:false, type:"string", desc:"1-81"},
+      {name:"nco_division_code",         req:false, type:"string", desc:"1-10"},
+      {name:"employment_category_code",  req:false, type:"string", desc:"1-11"},
+      {name:"industry_code",             req:false, type:"string", desc:"1-25"},
+    ]},
+    { title:"Finance & Governance Sub-Dimensions", filters:[
+      {name:"bank_group_code",              req:false, type:"string", desc:"1-6"},
+      {name:"activity_code",                req:false, type:"string", desc:"1-30"},
+      {name:"broad_activity_category_code", req:false, type:"string", desc:"1-4"},
+      {name:"type_of_establishment_code",   req:false, type:"string", desc:"1-3"},
+      {name:"deposit_code",                 req:false, type:"string", desc:"1-2"},
+      {name:"scheme_code",                  req:false, type:"string", desc:"1-2"},
+      {name:"lok_sabha_election_code",      req:false, type:"string", desc:"1-18"},
+      {name:"police_code",                  req:false, type:"string", desc:"1-17"},
+      {name:"court_code",                   req:false, type:"string", desc:"1-28"},
+      {name:"service_code",                 req:false, type:"string", desc:"1-13"},
+      {name:"crime_head_code",              req:false, type:"string", desc:"1-32"},
+      {name:"category_code",               req:false, type:"string", desc:"1-31"},
+    ]},
+  ],
+  python:`GENDER_INDICATORS = [
+    "Trend in Population", "Sex Ratio", "General Fertility Rate",
+    "Total Fertility Rate", "Maternal Mortality Ratio",
+    "Year Wise Infant Mortality Rate",
+    "Literacy Rates for persons aged 7 years and above",
+    "Gross Enrolment Ratio", "Gender Parity Index (GPI)",
+    "Labour Force Participation Rate (LFPR) (in percent) in usual status (ps+ss)",
+    "Incidence of Suicides", "Cases Filed by Women",
+    # ... (147 total — see full list in mospi_extract_all.py)
+]
+
+GENDER_COMMON = {
+    "sector_code": "1,2,3", "gender_code": "1,2,7",
+    "sub_indicator_code": ",".join(str(i) for i in range(1,153)),
+    "age_group_code":     ",".join(str(i) for i in range(1,42)),
+    "education_level_code": ",".join(str(i) for i in range(1,75)),
+    "crime_head_code":    ",".join(str(i) for i in range(1,33)),
+    "lok_sabha_election_code": ",".join(str(i) for i in range(1,19)),
+}
+
+async def extract_gender(client, cfg):
+    for idx, ind_name in enumerate(GENDER_INDICATORS, start=1):
+        await fetch(client, cfg, "GENDER", f"ind{idx:03d}",
+                    {"indicator_code": ind_name, **GENDER_COMMON})`,
+  values:{}
+},
+{id:"NFHS",name:"National Family Health Survey",cat:"health",indicators:21,freq:"Survey rounds",coverage:"NFHS-4 (2015-16) and NFHS-5 (2019-21)",use:"Fertility, mortality, nutrition, family planning, maternal health",desc:"21 indicators. sub_indicator_code values vary per indicator. Survey rounds: NFHS-4 and NFHS-5.",
+  notes:[{type:"info",text:"Omit state_code → all states returned. survey_code: 2=NFHS-4, 3=NFHS-5."}],
+  sections:[{title:"All Filters",filters:[
+    {name:"indicator_code",   req:true, type:"integer",desc:"1-21. Single value only."},
+    {name:"sub_indicator_code",req:false,type:"string", desc:"Values vary per indicator. Comma-sep."},
+    {name:"state_code",       req:false,type:"integer",desc:"State codes. Omit → all states."},
+    {name:"survey_code",      req:false,type:"integer",desc:"<span class='vals'>2</span>=NFHS-4 <span class='vals'>3</span>=NFHS-5"},
+    {name:"sector_code",      req:false,type:"integer",desc:"<span class='vals'>1</span>=Rural <span class='vals'>2</span>=Urban <span class='vals'>3</span>=Combined"},
+  ]}],
+  python:`async def extract_nfhs(client, cfg):
+    for ind in range(1, 22):
+        await fetch(client, cfg, "NFHS", f"ind{ind}",
+                    {"indicator_code": ind, "survey_code": "2,3"})`,
+  values:{survey:[{code:2,label:"NFHS-4 (2015-16)"},{code:3,label:"NFHS-5 (2019-21)"}]}
+},
+{id:"ENVSTATS",name:"Environment Statistics",cat:"env",indicators:124,freq:"Annual",coverage:"2001 to 2024",use:"Climate, water, forests, biodiversity, pollution, waste, disasters",desc:"124 indicators. Most sub-filters are indicator-specific — not all apply to every indicator. Omit irrelevant filters.",
+  notes:[{type:"info",text:"Most filters are indicator-specific. The API silently ignores filters that don't apply to the selected indicator. Omit what's not relevant."}],
+  sections:[{title:"Core Filters",filters:[
+    {name:"indicator_code",req:true, type:"integer",desc:"1-124. Single value only."},
+    {name:"year",          req:false,type:"string", desc:"YYYY format. Comma-sep."},
+    {name:"state",         req:false,type:"integer",desc:"State code. Omit → all states."},
+    {name:"region",        req:false,type:"integer",desc:"Region code."},
+    {name:"sector",        req:false,type:"integer",desc:"Sector code."},
+    {name:"sub_indicator", req:false,type:"integer",desc:"Sub-indicator code."},
+    {name:"period",        req:false,type:"string", desc:"Annual | Quarterly | Monthly"},
+    {name:"quarter",       req:false,type:"integer",desc:"Quarter code."},
+    {name:"month",         req:false,type:"integer",desc:"Month code."},
+  ]},
+  {title:"Domain-Specific Filters (indicator-specific)",filters:[
+    {name:"area / area_type",     req:false,type:"integer",desc:"Water body area filters"},
+    {name:"basin / sub_basin",    req:false,type:"integer",desc:"River basin filters"},
+    {name:"species / phylum",     req:false,type:"integer",desc:"Biodiversity filters"},
+    {name:"land_cover / land_use_category",req:false,type:"integer",desc:"Land use filters"},
+    {name:"fuel_type / commodity",req:false,type:"integer",desc:"Energy/mineral filters"},
+    {name:"emission_source",      req:false,type:"integer",desc:"Pollution source filter"},
+    {name:"city / zone",          req:false,type:"integer",desc:"Urban/zone filters"},
+    {name:"river / soil",         req:false,type:"integer",desc:"River and soil filters"},
+    {name:"minerals_category / ore",req:false,type:"integer",desc:"Mineral filters"},
+    {name:"lenght_of_road",       req:false,type:"integer",desc:"Transport filter (note: API uses typo 'lenght')"},
+  ]}],
+  python:`async def extract_envstats(client, cfg):
+    for ind in range(1, 125):
+        await fetch(client, cfg, "ENVSTATS", f"ind{ind}",
+                    {"indicator_code": ind})`,
+  values:{}
+},
+{id:"RBI",name:"RBI Statistics",cat:"trade",indicators:48,freq:"Annual · Quarterly · Monthly",coverage:"2009-10 to 2024-25",use:"Foreign trade, BoP, forex reserves, exchange rates, external debt",desc:"39 indicators (48 sub-indicators). Foreign trade by country/commodity, Balance of Payments, exchange rates (155 currencies), external debt, NRI deposits.",
+  notes:[{type:"warn",text:"RBI uses <code>sub_indicator_code</code> (1-48), not <code>indicator_code</code>."},
+         {type:"info",text:"Most sub-filters are indicator-specific — only relevant filters return data. Country/trade filters apply to trade indicators; currency filters to exchange rate indicators."}],
+  sections:[{title:"Required",filters:[
+    {name:"sub_indicator_code",req:true,type:"integer",desc:"1-48. Single value only. Determines which type of data (trade, BoP, forex, debt, NRI)."},
+  ]},
+  {title:"Trade Direction Filters (sub_ind 1-4)",filters:[
+    {name:"country_group_code",req:false,type:"string",desc:"<span class='vals'>1</span>=Africa <span class='vals'>2</span>=Asia <span class='vals'>3</span>=E.Europe <span class='vals'>4</span>=LatAm <span class='vals'>5</span>=OPEC <span class='vals'>6</span>=OECD <span class='vals'>7</span>=Others <span class='vals'>9</span>=Total"},
+    {name:"countries_code",    req:false,type:"string",desc:"Individual country codes. Comma-sep."},
+    {name:"trade_code",        req:false,type:"string",desc:"<span class='vals'>1</span>=Export <span class='vals'>3</span>=Import"},
+  ]},
+  {title:"Exchange Rate Filters",filters:[
+    {name:"currency_code",      req:false,type:"string",desc:"155 currencies. Comma-sep."},
+    {name:"currency_type_code", req:false,type:"string",desc:"Currency type filter."},
+    {name:"reference_rate_code",req:false,type:"string",desc:"Reference rate filter."},
+  ]},
+  {title:"External Debt Filters",filters:[
+    {name:"external_debt_sector_code",   req:false,type:"string",desc:"Sector filter."},
+    {name:"external_debt_term_code",     req:false,type:"string",desc:"Short/long term."},
+    {name:"external_debt_items_code",    req:false,type:"string",desc:"Debt items."},
+    {name:"external_debt_category_code", req:false,type:"string",desc:"Category filter."},
+  ]},
+  {title:"Time Filters",filters:[
+    {name:"year",    req:false,type:"string",desc:"YYYY-YY format. Comma-sep."},
+    {name:"month",   req:false,type:"string",desc:"Month code."},
+    {name:"quarter", req:false,type:"string",desc:"Quarter code."},
+    {name:"period",  req:false,type:"string",desc:"Period filter."},
+  ]}],
+  python:`async def extract_rbi(client, cfg):
+    for ind in range(1, 49):
+        await fetch(client, cfg, "RBI", f"ind{ind}",
+                    {"sub_indicator_code": ind})`,
+  values:{}
+},
+{id:"NSS77",name:"NSS 77th Round — Land & Livestock",cat:"agri",indicators:33,freq:"Survey",coverage:"2018-19",use:"Agricultural households, land, livestock, farm income, crop insurance",desc:"33 indicators on agricultural households. Indicator code is the FULL STRING NAME. Many sub-filters are indicator-specific.",
+  notes:[{type:"warn",text:"indicator_code is the full string name, not a number. Valid codes start from indicator 16 (first few may return empty)."},
+         {type:"tip",text:"Omit state_code → all states returned."}],
+  sections:[{title:"All Filters",filters:[
+    {name:"indicator_code",     req:true, type:"string", desc:"Full indicator name string. 33 indicators total."},
+    {name:"state_code",         req:false,type:"string", desc:"1-39. Omit → all states."},
+    {name:"gender_code",        req:false,type:"string", desc:"Gender filter."},
+    {name:"caste_code",         req:false,type:"string", desc:"Caste category."},
+    {name:"agricultural_household_code",req:false,type:"string",desc:"Agricultural household type."},
+    {name:"land_possessed_hosehold_code",req:false,type:"string",desc:"Land possession class."},
+    {name:"visit_code",         req:false,type:"string", desc:"Survey visit number."},
+    {name:"season_code",        req:false,type:"string", desc:"Agricultural season."},
+    {name:"crop_code",          req:false,type:"string", desc:"Crop type."},
+    {name:"operational_holding_code",req:false,type:"string",desc:"Operational holding type."},
+    {name:"ownership_holding_code",req:false,type:"string",desc:"Ownership holding type."},
+    {name:"livestock_owned_code",req:false,type:"string",desc:"Livestock type."},
+    {name:"loan_outstanding_code",req:false,type:"string",desc:"Loan source."},
+    {name:"sub_indicator_code", req:false,type:"string", desc:"Sub-breakdown."},
+  ]}],
+  python:`async def extract_nss77(client, cfg):
+    for ind in range(1, 34):
+        await fetch(client, cfg, "NSS77", f"ind{ind}",
+                    {"indicator_code": ind})`,
+  values:{}
+},
+{id:"NSS78",name:"NSS 78th Round — Living Conditions",cat:"social",indicators:14,freq:"Survey",coverage:"2020-21",use:"Water, sanitation, digital access, migration, household assets",desc:"14 indicators on household living standards. Note: filter names use capitalised first letter (State_code, Sector_code, Gender_code, Indicator).",
+  notes:[{type:"warn",text:"Filter names have capitalised first letter: <code>State_code</code>, <code>Sector_code</code>, <code>Gender_code</code>, <code>Indicator</code> — exact case required."},
+         {type:"tip",text:"Omit State_code → all states returned."}],
+  sections:[{title:"All Filters",filters:[
+    {name:"Indicator",           req:true, type:"string", desc:"Full indicator name string. 14 indicators total."},
+    {name:"State_code",          req:false,type:"string", desc:"1-39. Omit → all states."},
+    {name:"Sector_code",         req:false,type:"string", desc:"<span class='vals'>1</span>=Rural <span class='vals'>2</span>=Urban <span class='vals'>3</span>=Combined"},
+    {name:"Gender_code",         req:false,type:"string", desc:"1-3 (Male/Female/Person)"},
+    {name:"AgeGroup_code",       req:false,type:"string", desc:"1-2"},
+    {name:"InternetAccess_code", req:false,type:"string", desc:"1-2"},
+    {name:"Subindicator_code",   req:false,type:"string", desc:"1-34. Comma-sep."},
+    {name:"Households_code",     req:false,type:"string", desc:"1-3"},
+    {name:"SourceOfFinance_code",req:false,type:"string", desc:"1-5"},
+    {name:"main_reason_for_migration_code",req:false,type:"string",desc:"1-19"},
+    {name:"reason_leaving_household_code", req:false,type:"string",desc:"1-19"},
+  ]}],
+  python:`async def extract_nss78(client, cfg):
+    for ind in range(1, 15):
+        await fetch(client, cfg, "NSS78", f"ind{ind}",
+                    {"indicator_code": ind,
+                     "Sector_code": "1,2,3",
+                     "Gender_code": "1,2,3"})`,
+  values:{}
+},
+{id:"CPIALRL",name:"CPI — Agricultural/Rural Labourers",cat:"prices",indicators:2,freq:"Monthly",coverage:"1999-2000 to 2026",use:"Rural inflation, agricultural labourer cost of living",desc:"2 indicators: General Index and Group Index. Two worker types: Agricultural Labourers (AL) and Rural Labourers (RL). Two base years: 2019 and 1986-1987.",
+  notes:[{type:"info",text:"Two base years available: <code>2019</code> (current) and <code>1986-1987</code> (historical)."},
+         {type:"tip", text:"<code>groups_code</code> 1-6 only applies to indicator_code=2 (Group Index)."}],
+  sections:[{title:"All Filters",filters:[
+    {name:"indicator_code", req:true, type:"integer",desc:"<span class='vals'>1</span>=General Index <span class='vals'>2</span>=Group Index"},
+    {name:"worker_type",    req:true, type:"string", desc:"<span class='vals'>AL</span>=Agricultural Labourers <span class='vals'>RL</span>=Rural Labourers"},
+    {name:"base_year_code", req:false,type:"string", desc:"<span class='vals'>2019</span> <span class='vals'>1986-1987</span>"},
+    {name:"state_code",     req:false,type:"string", desc:"1-38, 99=All India. Omit → all states."},
+    {name:"year",           req:false,type:"string", desc:"YYYY-YYYY (e.g. 2006-2007) or YYYY (e.g. 2025). Comma-sep."},
+    {name:"month_code",     req:false,type:"string", desc:"1-12. Comma-sep."},
+    {name:"groups_code",    req:false,type:"string", desc:"1-6. For indicator_code=2 only."},
+  ]}],
+  python:`async def extract_cpialrl(client, cfg):
+    ind_label = {1: "GeneralIndex", 2: "GroupIndex"}
+    for ind in [1, 2]:
+        for wt in ["AL", "RL"]:
+            await fetch(client, cfg, "CPIALRL",
+                        f"{ind_label[ind]}_{wt}", {
+                "indicator_code": ind, "worker_type": wt,
+                "base_year_code": "2019,1986-1987",
+            })`,
+  values:{worker:[{code:"AL",label:"Agricultural Labourers"},{code:"RL",label:"Rural Labourers"}],base_year:[{code:"2019",label:"Current series (2019 base)"},{code:"1986-1987",label:"Historical series"}]}
+},
+{id:"HCES",name:"Household Consumption Expenditure Survey",cat:"social",indicators:9,freq:"Annual",coverage:"2022-23, 2023-24",use:"Consumer spending, poverty analysis, inequality (Gini)",desc:"9 indicators on consumption patterns. indicator_code is the FULL STRING NAME. imputation_type_code: 1=Without, 2=With. sector_code: only Rural (1) and Urban (2) — no Combined.",
+  notes:[{type:"warn",text:"indicator_code is the full string name — e.g. <code>'Average monthly per capita consumption expenditure (MPCE)'</code>."},
+         {type:"warn",text:"sector_code only has Rural (1) and Urban (2) — Combined is NOT available for HCES."},
+         {type:"tip", text:"Omit state_code → all states returned."}],
+  sections:[{title:"All Filters",filters:[
+    {name:"indicator_code",       req:true, type:"string", desc:"Full indicator name. 9 indicators. E.g. <span class='vals'>Average monthly per capita consumption expenditure (MPCE)</span>"},
+    {name:"sector_code",          req:false,type:"string", desc:"<span class='vals'>1</span>=Rural <span class='vals'>2</span>=Urban (Combined NOT available)"},
+    {name:"state_code",           req:false,type:"string", desc:"1-37, 99=All India. Omit → all states."},
+    {name:"imputation_type_code", req:false,type:"string", desc:"<span class='vals'>1</span>=Without Imputation <span class='vals'>2</span>=With Imputation"},
+    {name:"sub_indicator_code",   req:false,type:"string", desc:"1-3. Comma-sep."},
+    {name:"mpce_fractile_classes_code",req:false,type:"string",desc:"1-13. Comma-sep."},
+    {name:"item_category_code",   req:false,type:"string", desc:"1-31. Comma-sep."},
+    {name:"cereal_code",          req:false,type:"string", desc:"1-5"},
+    {name:"employment_of_households_code",req:false,type:"string",desc:"1-11"},
+    {name:"social_group_code",    req:false,type:"string", desc:"1-5"},
+    {name:"year",                 req:false,type:"string", desc:"YYYY-YY format."},
+  ]}],
+  python:`HCES_INDICATORS = [
+    "Average monthly per capita consumption expenditure (MPCE)",
+    "Average monthly per capita consumption expenditure (MPCE) Over 12 Fractile Classes",
+    "Monthly Per Capita Consumption Expenditure (MPCE) over Broad Categories in 30 Days",
+    "Percentage Share of Monthly Per Capita Consumption Expenditure (MPCE) over Broad Categories in 30 Days",
+    "Average Per Capita Monthly Quantity Consumption ",
+    "Average Monthly Per Capita Value of Consumption (Rs.)",
+    "Average Monthly Per Capita Consumption Expenditure (MPCE) across different Household Type",
+    "Average Monthly Per Capita Consumption Expenditure (MPCE) across different Social Group",
+    "Gini Coefficient for Per Capita Consumption Expenditure",
+]
+
+async def extract_hces(client, cfg):
+    for ind in HCES_INDICATORS:
+        safe = ind[:30].strip().replace(" ","_")
+        await fetch(client, cfg, "HCES", safe, {
+            "indicator_code": ind,
+            "sector_code": "1,2",
+            "imputation_type_code": "1,2",
+        })`,
+  values:{imputation:[{code:1,label:"Without Imputation"},{code:2,label:"With Imputation"}]}
+},
+{id:"TUS",name:"Time Use Survey",cat:"social",indicators:42,freq:"Survey",coverage:"TUS 2019, TUS 2024",use:"Time allocation, unpaid work, gender time gaps",desc:"42 indicators measuring time in paid/unpaid activities. indicator_code is the FULL STRING NAME. Rich sub-dimension filters including ICATUS activity codes (1-235).",
+  notes:[{type:"warn",text:"indicator_code is the full string name — long descriptive text strings."},
+         {type:"tip",text:"icatus_activity_code covers 235 activity categories. activity_code covers 44 broader categories. Omit → all activities returned."}],
+  sections:[{title:"Required",filters:[
+    {name:"indicator_code", req:true,type:"string",desc:"Full indicator name string. 42 indicators total."},
+  ]},
+  {title:"Geographic & Demographic",filters:[
+    {name:"state_code",  req:false,type:"string",desc:"1-37. Omit → all states."},
+    {name:"sector_code", req:false,type:"string",desc:"1-5"},
+    {name:"gender_code", req:false,type:"string",desc:"1-5"},
+  ]},
+  {title:"Activity Filters",filters:[
+    {name:"icatus_activity_code",  req:false,type:"string",desc:"1-235 (detailed ICATUS classification). Comma-sep."},
+    {name:"activity_code",         req:false,type:"string",desc:"1-44 (broader activity groups). Comma-sep."},
+    {name:"sna_activity_code",     req:false,type:"string",desc:"1-4 (SNA/Non-SNA classification)"},
+    {name:"place_of_activity_code",req:false,type:"string",desc:"1-4"},
+  ]},
+  {title:"Socioeconomic Breakdown",filters:[
+    {name:"age_group_code",                    req:false,type:"string",desc:"1-5"},
+    {name:"marital_status_code",               req:false,type:"string",desc:"1-4"},
+    {name:"quintile_class_of_umpce_code",      req:false,type:"string",desc:"1-6"},
+    {name:"level_of_education_code",           req:false,type:"string",desc:"1-9"},
+    {name:"social_group_code",                 req:false,type:"string",desc:"1-5"},
+    {name:"usual_principal_activity_code",     req:false,type:"string",desc:"1-13"},
+    {name:"broad_principal_activity_status_code",req:false,type:"string",desc:"1-4"},
+    {name:"household_member_code",             req:false,type:"string",desc:"1-7"},
+    {name:"day_of_week_code",                  req:false,type:"string",desc:"1-13"},
+    {name:"employment_status_code",            req:false,type:"string",desc:"1-16"},
+    {name:"sub_indicator_code",                req:false,type:"string",desc:"1-27"},
+    {name:"year",                              req:false,type:"string",desc:"YYYY format (2019 or 2024)"},
+  ]}],
+  python:`async def extract_tus(client, cfg):
+    for ind in range(1, 42):
+        await fetch(client, cfg, "TUS", f"ind{ind}",
+                    {"indicator_code": ind,
+                     "gender_code": "1,2,3,4,5",
+                     "sector_code": "1,2,3,4,5"})`,
+  values:{}
+},
+{id:"EC",name:"Economic Census",cat:"economy",indicators:3,freq:"Census",coverage:"EC4=1998, EC5=2005, EC6=2013-14",use:"District-wise establishment and worker counts",desc:"3 census rounds via POST mechanism. Rankings mode (top districts) and Detail mode (row-level data, 20 rows/page). State is required.",
+  notes:[{type:"warn",text:"EC uses a special POST mechanism — not a standard GET. The MCP server handles this internally."},
+         {type:"warn",text:"<code>state</code> is required. Without it, no data is returned."},
+         {type:"info",text:"Two modes: <code>ranking</code> (top N districts) and <code>detail</code> (row-level, paginated with pageNum)."}],
+  sections:[{title:"All Filters",filters:[
+    {name:"indicator_code",req:true, type:"string",desc:"<span class='vals'>EC6</span>=2013-14 (24 sectors, 36 states) <span class='vals'>EC5</span>=2005 (313 NIC codes, 35 states) <span class='vals'>EC4</span>=1998 (18 sectors, 35 states)"},
+    {name:"state",        req:true, type:"string",desc:"State code string (e.g. <span class='vals'>01</span>-<span class='vals'>36</span>). Required."},
+    {name:"activity",     req:false,type:"string",desc:"Activity sector code. EC6: 01-18. EC4: 01-16."},
+    {name:"nop",          req:false,type:"string",desc:"Nature of operation: <span class='vals'>1</span>=Perennial <span class='vals'>2</span>=Seasonal"},
+    {name:"sof",          req:false,type:"string",desc:"Source of finance: 1-6"},
+    {name:"ownership",    req:false,type:"string",desc:"Ownership type: 1-4"},
+    {name:"sector",       req:false,type:"string",desc:"<span class='vals'>1</span>=Rural <span class='vals'>2</span>=Urban"},
+    {name:"mode",         req:false,type:"string",desc:"<span class='vals'>ranking</span> (top districts) | <span class='vals'>detail</span> (row-level data)"},
+    {name:"top5opt",      req:false,type:"string",desc:"1-5: number of top districts to return (ranking mode)"},
+    {name:"pageNum",      req:false,type:"string",desc:"Page number for detail mode (20 rows/page)"},
+  ]}],
+  python:`async def extract_ec(client, cfg):
+    EC_STATES = {
+        "EC6": ["01","02","03","04","05","06","07","08","09","10",
+                "11","12","13","14","15","16","17","18","19","20",
+                "21","22","23","24","25","26","27","29","30","31",
+                "32","33","34","35","36","37"],
+        "EC5": ["01","02","03","04","05","06","07","08","09","10",
+                "11","12","13","14","15","16","17","18","19","20",
+                "21","22","23","24","25","26","27","28","29","30",
+                "31","32","33","34","35"],
+        "EC4": ["02","03","04","05","06","07","08","09","10","11",
+                "12","13","14","15","16","17","18","19","20","21",
+                "22","23","24","25","26","27","28","29","30","31",
+                "32","33","34","35","36"],
+    }
+    for round_code, states in EC_STATES.items():
+        all_records = []
+        for state in states:
+            records = await paginate_ec(client, round_code, state)
+            all_records.extend(records)
+        save(cfg, "EC", round_code, all_records)`,
+  values:{round:[{code:"EC6",label:"2013-14 (36 states, 24 activity sectors)"},{code:"EC5",label:"2005 (35 states, 313 NIC codes)"},{code:"EC4",label:"1998 (35 states, 18 activity sectors)"}]}
+},
+{id:"NSS79",name:"NSS 79th Round — CAMS + AYUSH",cat:"social",indicators:35,freq:"Survey",coverage:"2022-23",use:"Education, health expenditure, digital literacy, financial inclusion, AYUSH",desc:"35 indicators from two modules. CAMS (indicators 1-28): education, health expenditure, digital literacy, financial inclusion, living conditions. AYUSH (indicators 29-35): awareness, usage, expenditure.",
+  notes:[{type:"info",text:"Two modules: CAMS (28 indicators on living conditions) + AYUSH (7 indicators on traditional medicine)."},
+         {type:"tip",text:"Omit state_code → all states returned."}],
+  sections:[{title:"All Filters",filters:[
+    {name:"indicator_code",req:true, type:"integer",desc:"1-28 = CAMS module. 29-35 = AYUSH module."},
+    {name:"state_code",    req:false,type:"string", desc:"State codes. Omit → all states."},
+    {name:"sector_code",   req:false,type:"string", desc:"Rural / Urban / Combined."},
+    {name:"gender_code",   req:false,type:"string", desc:"Gender filter."},
+    {name:"survey_code",   req:false,type:"string", desc:"<span class='vals'>1</span>=CAMS <span class='vals'>2</span>=AYUSH module"},
+  ]}],
+  python:`async def extract_nss79(client, cfg):
+    for ind in range(1, 36):
+        module = "CAMS" if ind <= 28 else "AYUSH"
+        await fetch(client, cfg, "NSS79",
+                    f"ind{ind}_{module}", {"indicator_code": ind})`,
+  values:{module:[{code:1,label:"CAMS (indicators 1-28)"},{code:2,label:"AYUSH (indicators 29-35)"}]}
+},
+{id:"UDISE",name:"UDISE+ School Education",cat:"educ",indicators:46,freq:"Annual",coverage:"2018-19 to 2024-25",use:"Schools, enrolment, dropout, teachers, PTR, GER, ICT labs",desc:"46 indicators on school education. Covers schools (count, infrastructure), teachers, enrolment (total, CWSN, GER, NER, GPI), transition rates, and facilities.",
+  notes:[{type:"info",text:"Omit state_code → all states returned."},
+         {type:"tip",text:"Sub-indicator breakdown available for most indicators via sub_indicator_code."}],
+  sections:[{title:"All Filters",filters:[
+    {name:"indicator_code",   req:true, type:"integer",desc:"1-46. Single value only."},
+    {name:"state_code",       req:false,type:"string", desc:"State codes. Omit → all states."},
+    {name:"year",             req:false,type:"string", desc:"YYYY-YY format."},
+    {name:"sub_indicator_code",req:false,type:"string",desc:"Sub-breakdown codes."},
+    {name:"gender_code",      req:false,type:"string", desc:"Gender filter."},
+    {name:"management_code",  req:false,type:"string", desc:"School management type."},
+    {name:"category_code",    req:false,type:"string", desc:"School category."},
+    {name:"level_code",       req:false,type:"string", desc:"Education level (Primary/Upper/Secondary)."},
+  ]}],
+  python:`async def extract_udise(client, cfg):
+    for ind in range(1, 47):
+        await fetch(client, cfg, "UDISE", f"ind{ind}",
+                    {"indicator_code": ind})`,
+  values:{}
+},
+];
+
+/* ═══════════════════════════════════════ STATE ════════════════════════════════════════ */
+
+let currentDS  = DATASETS[0].id;
+let currentCat = "all";
+let currentTab = "filters";
+
+/* ═══════════════════════════════════════ SIDEBAR ════════════════════════════════════════ */
+
+function buildSidebar() {
+  const list = document.getElementById("ds-list");
+  list.innerHTML = DATASETS.map(d => `
+    <div class="ds-item${d.id===currentDS?" active":""}" data-id="${d.id}" data-cat="${d.cat}"
+         onclick="selectDS('${d.id}')">
+      <div class="ds-dot" style="background:${CAT_COLOR[d.cat]}"></div>
+      <div>
+        <div class="ds-item-name">${d.id}</div>
+        <div class="ds-item-sub">${d.name.length>28?d.name.slice(0,28)+"…":d.name}</div>
+      </div>
+    </div>`).join("");
+}
+
+function setCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  filterSidebar();
+}
+
+function filterSidebar() {
+  const q = document.getElementById("ds-search").value.toLowerCase();
+  document.querySelectorAll(".ds-item").forEach(el => {
+    const id = el.dataset.id;
+    const ds = DATASETS.find(d=>d.id===id);
+    const catMatch = currentCat==="all" || el.dataset.cat===currentCat;
+    const qMatch   = !q || id.toLowerCase().includes(q) || ds.name.toLowerCase().includes(q) || ds.use.toLowerCase().includes(q);
+    el.classList.toggle("hidden", !(catMatch && qMatch));
+  });
+}
+
+/* ═══════════════════════════════════════ MAIN PANEL ════════════════════════════════════════ */
+
+function selectDS(id) {
+  currentDS  = id;
+  currentTab = "filters";
+  document.querySelectorAll(".ds-item").forEach(el => el.classList.toggle("active", el.dataset.id===id));
+  render();
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab===tab));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.dataset.panel===tab));
+}
+
+function render() {
+  const ds = DATASETS.find(d=>d.id===currentDS);
+  const color = CAT_COLOR[ds.cat];
+  const panel = document.getElementById("panel-content");
+
+  panel.innerHTML = `
+    <div class="ds-header">
+      <div class="ds-header-top">
+        <div class="ds-badge" style="background:${color}">${ds.id}</div>
+        <div class="ds-full-name">${ds.name}</div>
+      </div>
+      <div class="ds-desc">${ds.desc}</div>
+      <div class="ds-meta-row">
+        <span class="meta-chip accent">${ds.indicators} indicator${ds.indicators>1?"s":""}</span>
+        <span class="meta-chip">${ds.freq}</span>
+        <span class="meta-chip">${ds.coverage}</span>
+        <span class="meta-chip">${ds.cat.charAt(0).toUpperCase()+ds.cat.slice(1)}</span>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn${currentTab==="filters"?" active":""}" data-tab="filters" onclick="switchTab('filters')">Filters</button>
+      <button class="tab-btn${currentTab==="python"?" active":""}" data-tab="python"  onclick="switchTab('python')">Python snippet</button>
+      <button class="tab-btn${currentTab==="values"?" active":""}" data-tab="values"  onclick="switchTab('values')">Valid values</button>
+    </div>
+
+    <div class="tab-panel${currentTab==="filters"?" active":""}" data-panel="filters">
+      ${ds.notes.map(n=>`<div class="note-box ${n.type}">${n.text}</div>`).join("")}
+      ${ds.sections.map(s=>`
+        <div class="filter-section">
+          <div class="filter-section-title">${s.title}</div>
+          <div class="filter-row header-row">
+            <div class="filter-cell">Parameter</div>
+            <div class="filter-cell">Type</div>
+            <div class="filter-cell">Required</div>
+            <div class="filter-cell">Values &amp; Notes</div>
+          </div>
+          ${s.filters.map(f=>`
+            <div class="filter-row">
+              <div class="filter-cell"><span class="param-name">${f.name}</span></div>
+              <div class="filter-cell"><span class="type-badge">${f.type}</span></div>
+              <div class="filter-cell">${f.req?'<span class="badge-req">required</span>':'<span class="badge-opt">optional</span>'}</div>
+              <div class="filter-cell filter-desc">${f.desc}</div>
+            </div>`).join("")}
+        </div>`).join("")}
+    </div>
+
+    <div class="tab-panel${currentTab==="python"?" active":""}" data-panel="python">
+      <div class="note-box tip">Paste this into <strong>mospi_extract_all.py</strong> — it uses the <code>fetch()</code> helper and <code>Config</code> dataclass from the main script.</div>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <pre id="python-code">${escapeHtml(ds.python)}</pre>
+      </div>
+    </div>
+
+    <div class="tab-panel${currentTab==="values"?" active":""}" data-panel="values">
+      ${Object.keys(ds.values).length===0
+        ? `<div class="note-box info">Valid values for this dataset are dynamically fetched from the API. Call <code>get_metadata(dataset="${ds.id}", indicator_code=N)</code> to retrieve the current valid codes for states, years, and indicator-specific sub-dimensions.</div>`
+        : `<div class="val-grid">${Object.entries(ds.values).map(([key,vals])=>`
+            <div class="val-card">
+              <div class="val-card-title">${key.replace(/_/g," ")}</div>
+              <ul class="val-list">${vals.map(v=>`
+                <li class="val-item">
+                  <span class="val-code">${v.code}</span>
+                  <span class="val-label">${v.label}</span>
+                </li>`).join("")}
+              </ul>
+            </div>`).join("")}</div>`
+      }
+    </div>
+  `;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function copyCode(btn) {
+  const code = document.getElementById("python-code").textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = "Copied!";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 2000);
+  });
+}
+
+/* ═══════════════════════════════════════ INIT ════════════════════════════════════════ */
+
+buildSidebar();
+render();
+</script>
+</body>
+</html>
